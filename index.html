@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <style>
+      .center-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        background-image: url("https://i.postimg.cc/B6G9RP5f/raimond-klavins-p8-MDcd-RYn-Zw-unsplash.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        height: 100vh;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row center-form pt-5 pb-5">
+        <div class="col-md-6 card pt-5 pb-5 text-center">
+          <!-- Adjust column width as needed -->
+          <form id="myForm" onsubmit="return postData()">
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="form-control"
+            />
+
+            <label for="surname">Surname:</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              required
+              class="form-control"
+            />
+
+            <label for="idNumber">ID Number (13 digits):</label>
+            <input
+              type="text"
+              id="idNumber"
+              name="idNumber"
+              title="ID Number must be 13 digits"
+              pattern="[0-9]{13}"
+              required
+              class="form-control"
+            />
+
+            <label for="dob">Date of Birth (dd/mm/YYYY):</label>
+            <input
+              type="text"
+              id="dob"
+              name="dob"
+              title="Enter date in dd/mm/YYYY format"
+              pattern="\d{1,2}/\d{1,2}/\d{4}"
+              required
+              class="form-control"
+            />
+
+            <button type="submit" class="btn btn-primary mt-3">POST</button>
+            <button type="reset" class="btn btn-secondary mt-3">CANCEL</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function postData() {
+        const form = document.getElementById("myForm");
+        const formData = {
+          name: form.name.value.trim(),
+          surname: form.surname.value.trim(),
+          idNumber: form.idNumber.value.trim(),
+          dob: form.dob.value.trim(),
+        };
+
+        // Basic validation for name and surname
+        if (!formData.name || !formData.surname) {
+          alert("Please enter valid name and surname.");
+          return false;
+        }
+
+        // Validation for ID Number and Date of Birth
+        if (!form.reportValidity()) {
+          return false;
+        }
+
+        // Send data to server
+        fetch("http://localhost:3000/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
+              // Repopulate the form or take necessary action
+            } else {
+              alert("Data submitted successfully!");
+              form.reset();
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+
+        return false; // Prevent default form submission
+      }
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
